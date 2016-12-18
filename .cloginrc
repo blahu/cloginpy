@@ -1,0 +1,23 @@
+## modified example from 
+# https://apt-browse.org/browse/debian/wheezy/main/i386/rancid/2.3.8-3/file/usr/share/doc/rancid/examples/cloginrc.sample
+
+# customer x
+# these routers ask for a username and password.
+add user       *.custx.net    roger
+add password   *.custx.net    {doger}
+
+# customer y
+# this is the normal cisco login.  a password followed by and enable password.
+# try ssh first, then telnet.
+add password   *.custy.net    {vector} {victor}
+add method     *.custy.net    ssh telnet
+
+# customer z; they use ssh only.
+add user       *.custz.net    shirley
+add password   *.custz.net    {jive} {surely}
+add method     *.custz.net    ssh
+
+# catch-all
+add user       *.net          netadmin
+add password   *.net          {etpasswor}
+add method     *.net          ssh
