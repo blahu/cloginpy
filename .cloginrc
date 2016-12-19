@@ -5,6 +5,7 @@
 # these routers ask for a username and password.
 add user       *.custx.net    roger
 add password   *.custx.net    {doger}
+add userprompt *.custx.net    {"(Username|login|username):"}
 
 # customer y
 # this is the normal cisco login.  a password followed by and enable password.
@@ -16,8 +17,14 @@ add method     *.custy.net    ssh telnet
 add user       *.custz.net    shirley
 add password   *.custz.net    {jive} {surely}
 add method     *.custz.net    ssh
+add ciphertype *.custz.net    aes128-ctr
 
 # catch-all
 add user       *.net          netadmin
 add password   *.net          {etpasswor}
 add method     *.net          ssh
+add userprompt *.net          {"(Username|login|user name):"}
+add passprompt *.net          {"([Pp]assword|passwd):"}
+add autoenable *.net          1
+add ciphertype *.net          3des
+add user       *              a

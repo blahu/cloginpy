@@ -2,6 +2,8 @@
 
 Here's a short description of the cloginpy project. The idea is to replace expect-based clogin script with a _refined_ version powered by [netmiko](https://github.com/ktbyers/netmiko).
 
+### WIP
+2016-12-19 20:13 GMT cloginrc.py completed reading of .cloginrc file for most of the interesting options. Works starts on merging both scripts to provide single utility.
 
 ### Components
 

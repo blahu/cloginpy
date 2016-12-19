@@ -4,6 +4,10 @@ from fnmatch import fnmatch
 
 __version__ = (1,1)
 
+
+class CloginSyntaxErrorException(Exception):
+    pass
+
 def read_cloginrc(router, dot_cloginrc='.cloginrc'):
     debug = True
     debug = False
@@ -17,8 +21,14 @@ def read_cloginrc(router, dot_cloginrc='.cloginrc'):
     user_found = 0
     password = ''
     password_found = 0
-    method = ''
+    method = ['telnet', 'ssh']
     method_found = 0
+    userprompt = '{"(Username|login|user name):"}'
+    userprompt_found = 0
+    passprompt = '"([Pp]assword|passwd):"'
+    passprompt_found = 0
+    autoenable = 1
+    autoenable_found = 0
 
     with open(dot_cloginrc) as f:
         for line in f:
@@ -39,7 +49,7 @@ def read_cloginrc(router, dot_cloginrc='.cloginrc'):
             
             if chunks[0] == 'add':
 
-                ## USERS DB
+                ## USER
                 if chunks[1] == 'user' and not user_found:
                     if fnmatch(router, chunks[2]):
                         user_found = 1
@@ -49,7 +59,7 @@ def read_cloginrc(router, dot_cloginrc='.cloginrc'):
                         
                         user = chunks[3]
                 
-                ## PASSWORDS DB
+                ## PASSWORD
                 if chunks[1] == 'password' and not password_found:
                     if fnmatch(router, chunks[2]):
                         password_found = 1
@@ -73,7 +83,7 @@ def read_cloginrc(router, dot_cloginrc='.cloginrc'):
                                 print "Too many passwords"
                         
 
-                ## METHODS DB
+                ## METHOD
                 if chunks[1] == 'method' and not method_found:
                     if fnmatch(router, chunks[2]):
                         method_found = 1
@@ -95,16 +105,53 @@ def read_cloginrc(router, dot_cloginrc='.cloginrc'):
 
                             if debug:
                                 print "Too many methods"
+                
+                ## USERPROMPT
+                if chunks[1] == 'userprompt' and not userprompt_found:
+                    if fnmatch(router, chunks[2]):
+                        userprompt_found = 1
+                        
+                        if debug:
+                            print "{}_found = {}".format(chunks[1], userprompt_found)
+                        
+                        userprompt = chunks[3]
+                
+                ## PASSPROMPT
+                if chunks[1] == 'passprompt' and not passprompt_found:
+                    if fnmatch(router, chunks[2]):
+                        passprompt_found = 1
+                        
+                        if debug:
+                            print "{}_found = {}".format(chunks[1], passprompt_found)
+                        
+                        passprompt = chunks[3]
+
+                ## AUTOENABLE
+                if chunks[1] == 'autoenable' and not autoenable_found:
+                    if fnmatch(router, chunks[2]):
+                        autoenable_found = 1
+                        
+                        if debug:
+                            print "{}_found = {}".format(chunks[1], autoenable_found)
+                        
+                        passprompt = chunks[3]
+
+            else:
+                raise CloginSyntaxErrorException(line)
         if debug:
             print user
             print password
             print method
+            print userprompt
+            print passprompt
+            print autoenable
 
-        return (user, password, method)
+        return (user, password, method, userprompt, passprompt, autoenable)
 
-def main():
-    
 
+
+
+def test():
     routers = [
         'r1.custx.net',
         'r1.custy.net',
@@ -124,9 +171,9 @@ def main():
     ]
 
     for r in routers:
-        user, password, method = read_cloginrc(r)
+        user, password, method, userprompt, passprompt, autoenable = read_cloginrc(r)
         print "router={}, user={} password={} method={}".format(r, user, password, method)
 
 
 if __name__ == '__main__':
-    main()
+    test()
