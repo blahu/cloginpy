@@ -3,6 +3,7 @@
 Here's a short description of the cloginpy project. The idea is to replace expect-based clogin script with a _refined_ version powered by [netmiko](https://github.com/ktbyers/netmiko).
 
 ### WIP
+
 #### 2016-12-20 22:23 GMT
 cloginrc.py has been incorporated into clogin.py. Now we can connect to devices that allow priv==15. Enable doesn't work yet.
 
