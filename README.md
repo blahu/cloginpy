@@ -5,6 +5,7 @@ Here's a short description of the cloginpy project. The idea is to replace expec
 ### WIP
 
 #### 2016-12-20 22:23 GMT
+
 cloginrc.py has been incorporated into clogin.py. Now we can connect to devices that allow priv==15. Enable doesn't work yet.
 
 #### 2016-12-19 20:13 GMT
