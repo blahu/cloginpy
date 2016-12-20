@@ -12,6 +12,7 @@ add userprompt *.custx.net    {"(Username|login|username):"}
 # try ssh first, then telnet.
 add password   *.custy.net    {vector} {victor}
 add method     *.custy.net    ssh telnet
+add autoenable *.custy.net    0
 
 # customer z; they use ssh only.
 add user       *.custz.net    shirley
