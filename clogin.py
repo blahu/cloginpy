@@ -5,13 +5,14 @@ from netmiko import ConnectHandler
 from fnmatch import fnmatch
 import argparse
 import sys
+import re
 
 class CloginSyntaxErrorException(Exception):
     pass
 
 def read_cloginrc(router, dot_cloginrc='.cloginrc'):
-    debug = False
     debug = True
+    debug = False
 
     if debug:
         print
@@ -42,8 +43,9 @@ def read_cloginrc(router, dot_cloginrc='.cloginrc'):
             #if debug:
             #    print line
 
-            # split line into chunks (could be variable)
-            chunks = line.split()
+            # split line into 4 chunks 
+            # could be variable, if som they will be inspected below on case by case basis)
+            chunks = line.split(None, 3)
 
             if debug:
                 print chunks
@@ -68,20 +70,21 @@ def read_cloginrc(router, dot_cloginrc='.cloginrc'):
                         if debug:
                             print "{}_found = {}".format(chunks[1], password_found)
                         
-                        if len(chunks) == 4:
-                            # user's password only
-                            password = {'password' : chunks[3]}
+                        m = re.search("^{([^{}]+?)}\s+{([^{}]+?)}$", chunks[3])
+                        if m:
+                            password = {'password' : m.group(1), 'secret' : m.group(2)}
+                            continue
+                        m = re.search("^{([^{}]+?)}$", chunks[3])
+                        if m:
+                            password = {'password' : m.group(1)}
+                            continue
 
-                        elif len(chunks) == 5:
-                            # user's password andsecret's secret
-                            password = {'password' : chunks[3], 'secret' : chunks[4]}
-                        
-                        else:
-                            # reset flag if more than 2 passwords
-                            password_found = 0
-                        
-                            if debug:
-                                print "Too many passwords"
+                        # reset flag if <1 OR >2 passwords
+                        password_found = 0
+                    
+                        raise CloginSyntaxErrorException("[{}]: Too few or many passwords".format(line))
+                        if debug:
+                            print "Too few or many passwords"
                         
 
                 ## METHOD
@@ -92,13 +95,15 @@ def read_cloginrc(router, dot_cloginrc='.cloginrc'):
                         if debug:
                             print "{}_found = {}".format(chunks[1], method_found)
                         
-                        if len(chunks) == 4:
-                            # one method only
-                            method = [chunks[3]]
+                        m  = chunks[3].split()
 
-                        elif len(chunks) == 5:
+                        if len(m) == 1:
+                            # one method only
+                            method = [m[0]]
+
+                        elif len(m) == 2:
                             # two methods defined
-                            method = [chunks[3], chunks[4]]
+                            method = [m[0], m[1]]
                         
                         else:
                             # reset flag if more than 2 methods
@@ -151,24 +156,27 @@ def read_cloginrc(router, dot_cloginrc='.cloginrc'):
 
 def run_commands(cmds, autoenable, **device):
     debug = True
+    debug = False
     if debug:
-        print cmds
-        print autoenable
-        print device
+        print "cmds={}".format(cmds)
+        print "autoenable={}".format(autoenable)
+        print "device={}".format(device)
 
     conn = ConnectHandler(**device)
     if not autoenable:
         if debug:
-            print "Enabling"
-        conn.enable()
-    else:
-        print "aaa"
+            print "Enabling",
+        output = conn.enable()
+        if debug:
+            print "...done [{}]".format(output)
 
-    prompt = conn.find_prompt()
+    prompt = conn.find_prompt(10)
+    if debug:
+        print "prompt={}".format(prompt)
     for c in cmds.split(';'):
         c = c.strip()
-        output = conn.send_command(c)
         print prompt + ' ' + c
+        output = conn.send_command(c)
         print output
 
     conn.disconnect()

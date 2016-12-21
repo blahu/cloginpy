@@ -4,6 +4,11 @@ Here's a short description of the cloginpy project. The idea is to replace expec
 
 ### WIP
 
+#### 2016-12-21 21:22 GMT
+
+fixed enable mode. also made changes to `read_cloginrc()` to support spaces in passwords, user prompts and password prompts
+todo: use protocol according to method with fallback if ``len(method)>2``
+
 #### 2016-12-20 22:23 GMT
 
 cloginrc.py has been incorporated into clogin.py. Now we can connect to devices that allow priv==15. Enable doesn't work yet.

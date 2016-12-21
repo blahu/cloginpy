@@ -4,7 +4,7 @@
 # customer x
 # these routers ask for a username and password.
 add user       *.custx.net    roger
-add password   *.custx.net    {doger}
+add password   *.custx.net    {doger} {aaa}
 add userprompt *.custx.net    {"(Username|login|username):"}
 
 # customer y
